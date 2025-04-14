@@ -1,0 +1,36 @@
+
+REMOTE PROCEDURE CALLS
+======================
+
+Les firmwares déployés sur le campus peuvent interagir avec l'infrastructure du
+réseau via des Remote Procedure Calls pour invoquer des "méthodes distances" 
+côté serveur.  De nombreux objets invoquent des méthodes distantes pour assurer
+leur fonctionnement.
+
+Certains firmwares ont des modes de mise au point qui affichent les traces
+d'exécution des méthodes distantes invoquées.
+
+L'invocation de méthodes distantes repose sur le protocole JSON-RPC version 2.0.
+
+Sur le campus, toutes les requêtes doivent être envoyées à l'adresse :
+
+	http://m1.tme-crypto.fr:8888/
+
+Il n'y a pas de catalogue global des méthodes disponibles.  Cependant, les
+méthodes suivantes peuvent être invoquées (notamment lors de la mise au point de
+clients) :
+
+- echo
+- man
+- server.status
+- server.history
+                           [--------REDACTED--------]
+                           [--------REDACTED--------]
+- world.list
+                           [--------REDACTED--------]
+
+
+Références bibliographiques
+===========================
+- https://en.wikipedia.org/wiki/Remote_procedure_call
+- https://www.jsonrpc.org/specification

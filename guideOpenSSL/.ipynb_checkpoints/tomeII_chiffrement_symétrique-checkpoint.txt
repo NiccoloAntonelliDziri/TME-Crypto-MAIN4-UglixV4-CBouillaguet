@@ -1,0 +1,44 @@
+CHIFFREMENT SYMÉTRIQUE
+======================
+
+L'essentiel des tâches de chiffrement peut être réalisé avec la
+bibliothèque OpenSSL (la version 1.0 est requise au minimum).
+
+La plupart du temps, les utilisateurs d'UGLIX chiffrent leurs fichiers
+avec un mécanisme à clef secrète et en utilisant un mot de passe.
+OpenSSL se débrouille pour convertir ce mot de passe en une clef
+secrète et un vecteur d'initialisation. De l'aléa est généralement
+introduit dans ce processus.
+
+Pour augmenter la portabilité, les utilisateurs d'UGLIX stockent
+généralement les fichiers chiffrés en les encodant en base64.
+
+Enfin, par défaut, les utilisateurs d'UGLIX sont invités à utiliser
+l'AES-128 en mode CBC pour chiffrer leurs données.
+
+Vous êtes invités à vous reporter à la documentation plus détaillée de
+OpenSSL, en particulier en exécutant "man openssl", "openssl enc
+help", ou bien en consultant la page du mode d'emploi de openssl
+dédiée au chiffrement symétrique ("man openssl-enc").
+
+Déchiffrer le fichier "foo" en utilisant le mot de passe "bar" peut
+logiquement s'accomplir par la commande :
+
+openssl enc -d -base64 -aes-128-cbc -pbkdf2 -pass pass:"bar" -in foo
+
+Il est très pratique de pouvoir invoquer openssl depuis des programmes.
+Pour cette raison, un autre script open-source est mis à la disposition
+de la communauté. On le trouve dans le guide intitulé "script d'exemple".
+
+Vous êtes invité à l'adapter à tous vos besoins.
+
+    ⚠      Il existe plusieurs versions de OpenSSL. Ce serveur UGLIX utilise
+   ⚠ ⚠     "OpenSSL 1.1.1d  10 Sep 2019". N'hésitez pas à vérifier avec la 
+  ⚠ | ⚠    commande "openssl version". Il FAUT une version supérieure à 1.1.1 !
+ ⚠  o  ⚠   Si vous avez la 1.1.0 (ou plus ancienne), l'option -pbkdf2 ne sera
+⚠⚠⚠⚠⚠⚠⚠⚠⚠  pas reconnue.
+    |      
+    |      Attention, sur les versions récentes de MacOS, "openssl" est en fait
+    |      LibreSSL (un fork). Et il est partiellement incompatible !
+
+

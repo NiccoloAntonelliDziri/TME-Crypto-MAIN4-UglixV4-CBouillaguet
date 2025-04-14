@@ -1,0 +1,46 @@
+À PROPOS DU PROTOCOLE TELNET
+============================
+
+Lorsqu'un utilisateurs ouvre une session sur une machine physique (par exemple 
+dans les salles de TME), il utilise un TERMINAL.  Un processus (typiquement le 
+shell) est lancé par le système d'exploitation pour satisfaire les besoins de 
+l'utilisateur.  Ce processus et le terminal échangent alors des octets.
+
+                        ┌───────┐    ┌──────────┐
+                        │ Shell ├────┤ Terminal │
+                        └───────┘    └──────────┘
+
+
+Lorsqu'une session est établie à distance avec le protocole telnet, une "couche 
+TELNET" s'intercale entre le terminal et l'application.  Elle est invisible pour 
+les deux extrémités.
+
+
+             Couche TELNET
+           ╔═════════════════════════════════════════════════════╗
+           ║                                                     ║
+┌───────┐  ║  ┌────────────────┐              ┌───────────────┐  ║  ┌──────────┐
+│ Shell ├──╫──┤ serveur telnet ├╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤ client telnet ├──╫──┤ Terminal │
+└───────┘  ║  └────────────────┘              └───────────────┘  ║  └──────────┘
+           ║                                                     ║
+           ╚═════════════════════════════════════════════════════╝
+
+
+Nous n'allons pas rentrer ici dans les détails sordides du protocole telnet. 
+Il transmet essentiellement les octets directements, mais il faut cependendant
+savoir que l'octet 0xFF a une signification particulière dans ce protocole
+(il permet au client et au serveur de se transmettre des commandes ou de
+négocier des options).
+
+Tous les autres octets sont transmis tels quels.  Pour transmettre l'octet 0xFF 
+lui-même, le protocole telnet procède à un "échappement" et envoie les deux 
+octets 0xFFFF.
+
+Le serveur et le client telnet peuvent s'échanger des informations sans pertuber
+le monde extérieur (par exemple, le client informe le serveur d'éventuelles 
+modification de la taille de la fenêtre, etc.).  D'autres extensions sont 
+possibles.  Dans UGLIX ce mécanisme est utilisé pour agrémenter l'expérience 
+des utilisateurs avec la musique et les effets sonores.
+
+Le protocole TELNET transmet les données en clair, ce qui pose évidemment des
+problèmes de sécurité.

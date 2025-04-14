@@ -1,0 +1,72 @@
+NIVEAU 1
+-------------------------------------------------------------------------------
+
+Aller dans le DSI DATACENTER:
+
+La clé est sur le post-it:
+ISECR0XX
+
+Le chiffré est sous le clavier:
+U2FsdGVkX1+mWqhwC9OJPU2kGXK1I+iwKm8IRyFh/9hMLlSxGfE3CxUgrtw4KyuRd3JeFUwjqS1iv1IC3xd2Wg==
+
+Il faut le décrypter aes-128-cbc:
+c98bcc66-2990-4d1e-995c-a4fa70266a47
+
+Créer compte administrateur:
+
+username: niccolo
+password: XVdeFranceXV
+
+NIVEAU 2
+-------------------------------------------------------------------------------
+
+Local éléctrique demande d'uploder une clef dans un  des termnial de service
+
+Well, just in case, in order to ensure auditability of                    
+               electrical operations, you need to perform a digital signature.
+You have no public-key. Upload a public-key on a service terminal first.
+
+--
+Dans le local de service 3 et 5 il y plusieurs options
+
+
+1. Manage ID card: Lire et uploder data carte (champ pour écrire)
+2. Public Key Infrastructure: -> Tutoriel + la ou upload public-key et signature
+3. Locksmith Tools:
+    1. Create RSA Public Key
+    2. Create RSA Secret Key
+    3. Return to main menu
+4. Exit
+
+Compléter le tutorial:
+Active user: niccolo
+                                         PKI tutorial                                         
+                                         ------------                                         
+
+                    The PKI offers a public directory of public keys.
+                    Users can upload their own public keys.
+                    The PKI guarantees that keys belong to the correct users,
+                    because users are authenticated when they upload their keys.
+
+                    To complete the tutorial, take the following steps:
+                    1. Read the openssl documentation manual
+                    2. Fetch the public key of user "pki_tutorial"
+                    3. Encrypt the string "I got it!" with this public-key
+                    4. Submit the (hex-encoded) ciphertext below
+
+                    Ciphertext:                                                                                  
+2:
+Public key:                 
+                    -----BEGIN PUBLIC KEY-----
+                    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwtWxfirjfBhMrr2i9s2a
+                    OeCP5J5eLNrt23+yFNxai69Hw5Stg7BwPMXM2yjEJIhv3C5HEi4BZt+076+n16/L
+                    MKQnFccbl0wkejb/w72UYlibViN3K/cy+TUIbvgp73nl1LOmI7H7n5C3Q3pMP9ag
+                    M8lLiu8+7WaPf7+OFxfd/SssxLO+GyGURBzQcxT7/aayCGpTZRst/uJKF/2Q29V2
+                    uUtRGel3SxpDoDUHSNb76h5Vb9H8CUq95dOktPIcBGodt+U0fD2qoObgH3HvN+95
+                    C7QbA2uaeV2LHiStnpbJhwVqnb4WekTeL5r1br+j4ViR9UmJyIFbri7YaIe1maTV
+                    /wIDAQAB
+                    -----END PUBLIC KEY-----
+
+                    Signatures:                 NONE
+
+

@@ -1,0 +1,72 @@
+OBTENTION DE CERTIFICATS AVEC OPENSSL
+=====================================
+
+(il est conseillé d'avoir lu l'autre guide sur les certificats d'abord).
+
+Les certificats sont délivrés par des autorités de certification.  Émettre un
+certificat revient peu ou prou à réaliser une signature.  Les autorités de 
+certification produisent des certificats à partir de ``Certificate Signing 
+Requests'' (CSR) qui contiennent tous les renseignements nécessaire, à savoir
+- l'identité de la personne / de la machine
+- la clef publique corrrespondante.
+- une signature du tout par la clef secrète qui va avec.
+
+Remarques :
+  - une CSR est en quelque sorte un certificat auto-signé.
+  - réaliser la signature démontre que l'entité demandeuse possède la clef
+    secrète, et donc n'essaye pas d'usurper l'identité d'un tiers. 
+
+La norme PKCS#10 fixe un format de CSR.  L'utilitaire openssl est capable de
+lire et d'écrire des CSRs dans ce format.  Dans ce format, l'identité de 
+l'entité qui sollicite un certificat est un dictionnaire qui peut avoir des tas
+de champs (pays, email, entreprise, adresse postale, ...), mais le SEUL qui est
+vraiment obligatoire est le "Common Name" (CN en abrégé).
+ 
+En gros, un utilisateur qui possède une paire de clef peut produire une CSR puis
+la transmettre à une autorité de certification.  Celle-ci, après avoir vérifié
+l'identité de l'entité qui la sollicite, émet le certificat correspondant.
+
+(on note que l'autorité de certification n'a pas accès à la clef jamais la clef
+secrète de l'utilisateur).
+
+     Clef secrète ------------------> CSR ------------------> Certificat
+
+
+Le système UGLIX contient une autorité de certification qui délivre des certificats
+aux utilisateurs.  Elle est accessible via les terminaux de service.
+
+
+PRODUCTION D'UNE CSR
+--------------------
+
+Si on dispose d'une clef secrète dans un fichier <key.pem>, alors la commande
+
+        openssl req -new -key <key.pem> -batch -subj '/CN=<username>'
+
+produit une nouvelle (-new) CSR pour la bonne clef publique (-key <key.pem>),
+sans poser de question (-batch), et en considérant que l'identité à associer à
+la clef publique est simplement <username> (-subj '/CN=<username>').
+
+Par défaut, le résultat est affiché sur la sortie standard, mais on peut le
+rediriger vers un fichier avec l'option "-out".
+
+EXAMEN D'UNE CSR
+----------------
+
+On peut visualiser le contenu d'une CSR (qui se trouve dans un fichier
+<csr.pem>) en format "human-friendly" avec la commande.
+
+        openssl req -in <csr.pem> -text -noout
+
+On peut aussi extraire uniquement le sujet :
+
+        openssl req -in <csr.pem> -subject -noout
+
+Ou bien uniquement la clef publique :
+
+        openssl req -in <csr.pem> -pubkey -noout
+
+La sortie peut être redirigée avec -out.  De même, si l'option "-in" n'est pas
+indiquée, la CSR est lue sur l'entrée standard.
+
+

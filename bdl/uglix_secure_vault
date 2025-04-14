@@ -1,0 +1,52 @@
+ENCLAVES SÉCURISÉES ``UGLIX SECURE VAULT'' (r)
+==============================================
+
+Une enclave sécurisé est un composant matériel dans un ordinateur qui permet le
+stockage de données sensibles dans une mémoire spéciale, à laquelle le processeur
+n'accède pas directement.  Ceci renforce la sécurité, car même si le système
+d'exploitation était compromis, les données restent potentiellement hors de portée
+d'un attaquant.  Elles sont bien sûr stockées de manière chiffrée.
+
+Voici une description de la procédure de chiffrement.
+
+Tout d'abord des données biométriques sont extraites de l'utilisateur lors de
+l'initialisation de l'enclave sécurisé.  Ceci constitue une <seed> spécifique
+aux corps de l'utilisateur et imprévisible.
+
+Cette <seed> est convertie en une chaîne de 256 bits pseudo-aléatoires par la 
+procédure suivante :
+
+from hashlib import sha256
+def key_expansion(seed : bytes) -> bytes:
+    """
+    Renvoie 256 bits pseudo-aléatoires à partir de seed
+    """
+    state = seed
+    output = b''
+    for i in range(8):
+        state = hashlib.sha256(state).digest()
+        output += state[:4]
+    return output
+
+Ensuite, une clef (K) de 128 bits et un vecteur d'initialisation (IV) de 128 bits
+en sont dérivés :
+
+
+>>> key_material = key_expansion(seed)
+>>> K = key_material[0:16]
+>>> IV = key_material[16:32]
+
+Les données stockées dans l'enclave sécurisée sont ensuite chiffrées avec cette
+clef et cet IV (se reporter au guide OpenSSL ``chiffrement symétrique avec clef
+et IV explicites'' pour plus de détails).
+
+
+MISE À JOUR IMPORTANTE
+======================
+
+Le fabriquant du dispositif d'extraction des données biométrique nous a informé
+qu'à la suite d'un bug malencontreux, les <seed> sont en fait des chaînes de 16
+bits, ce qui est nettement insuffisant.  Tous les utilisateurs d'UGLIX sont
+urgemment invités à mettre à jour leurs firmwares.
+
+

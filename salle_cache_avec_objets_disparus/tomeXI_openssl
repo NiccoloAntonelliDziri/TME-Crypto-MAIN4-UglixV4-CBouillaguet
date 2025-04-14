@@ -1,0 +1,72 @@
+FORMAT DES CHIFFRÉS SYMÉTRIQUES DANS OPENSSL
+============================================
+
+Lorsqu'on invoque "openssl enc ..." pour réaliser un chiffrement symétrique, on
+fournit un mot de passe ("passphrase"), potentiellement de faible entropie, et 
+non une vraie clef de chiffrement, c'est-à-dire 128 bits vraiment aléatoires.
+De plus, la plupart des modes opératoires nécessitent un IV aléatoires pour
+réaliser le chiffrement.
+
+Le format des chiffrés produit par OpenSSL n'est pas documenté.  Cependant, 
+OpenSSL est open-source, donc un peu de rétro-ingénierie permet de comprendre ce
+qui se passe.  La description qui suit fait abstraction du fait que les chiffrés
+sont souvent encodés en base64.
+
+Lors du chiffrement, un <sel> de 64 bits est choisi uniformément au hasard.
+Ensuite, un IV et une clef sont dérivés de la <passphrase> et du <sel> via la
+fonction de dérivation de clef standard PBKDF2 (cf. RFC8018).  Les paramètres
+utilisés sont les suivants :
+  - PRF: HMAC-SHA256
+  - iterations: 10000
+  - output size: 32
+
+32 octets sont donc dérivés ; les 16 premiers forment la <clef> et les 16 
+suivants forment l'<IV>.  Si le message original est noté <plaintext>, alors
+on définit <ciphertext> comme étant le résultat du chiffrement de <plaintext> 
+par AES-128-CBC utilisant <clef> (128 bits) et <IV> (128 bits).
+
+Le résultat final est la concaténation de :
+- La chaine "Salted__" (8 octets)
+- <sel> (8 octets)
+- <ciphertext> (taille variable, multiple de 16)
+
+Il s'ensuit que le tout peut s'implanter de la façon suivante en python :
+
+--------------------------------------------------------------------------------
+
+from hmac import HMAC
+from hashlib import sha256
+import secrets
+
+def binxor(a, b):
+    """
+    XORs two bytes() objects
+    """
+    return bytes([x ^ y for (x, y) in zip(a, b)])
+
+def PBKDF2(passphrase, salt, iterations=10000):
+    """
+    Produces 32 output bytes from the passphrase and the salt using PBKDF2 with
+    HMAC-SHA256.
+    """
+    i = 1
+    U = HMAC(passphrase, salt + i.to_bytes(4, 'big'), digestmod=sha256).digest()
+    result = U
+    for _ in range(1, iterations):
+        U = HMAC(passphrase, U, digestmod=sha256).digest()
+        result = binxor(result, U)
+    return result
+
+def encrypt(plaintext : bytes, passphrase : bytes) -> str:
+    """
+    Produces a ciphertext compatible with ``openssl enc'' (without base64).
+    Requites an external 'aes_128_cbc' function
+    """
+    salt = secrets.token_bytes(8)
+    keymat = PBKDF2(passphrase.encode(), salt, iterations=10000)
+    key = keymat[:16]
+    IV = keymat[16:]
+    ciphertext = aes_128_cbc(key, IV, plaintext.encode())
+    return b"Salted__" + salt + ciphertext
+    
+

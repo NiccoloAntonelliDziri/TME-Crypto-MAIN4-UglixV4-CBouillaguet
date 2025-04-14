@@ -1,0 +1,40 @@
+RML STANDARD LIBRARY v1.34
+==========================
+
+In addition to the default predefined types (bool, int, string, data), the RML 
+standard library defines the following extra types :
+  - ROOM
+  - ITEM
+  - DIRECTION
+
+These types are opaque.  The "data" type denotes an arbitrary bit string.
+
+Here is a list of functions offered by the standard library :
+
+string_of_int (i : int) -> string
+direction_from_string(name : string) -> DIRECTION maybe
+direction_to_string(dir : DIRECTION) -> string
+room_name(room : ROOM) -> string
+room_description(room : ROOM) -> string
+room_from_name (name : string) -> ROOM maybe
+neighbor (room : ROOM, direction : DIRECTION) -> ROOM maybe
+room_items (room : ROOM) -> ITEM list
+room_directions (room : ROOM) -> DIRECTION list
+item_name (item : ITEM) -> string
+item_portable (item : ITEM) -> string maybe.          
+item_use (item : ITEM) -> anything.                   
+item_match (item : ITEM, name : string) -> bool.      
+item_gender (item : ITEM) -> string
+item_state (item : ITEM) -> string maybe
+item_location (item : ITEM) -> ROOM
+item_description_handles (item : ITEM) -> data list
+handle_ciphertext (handle : data) -> data. 
+handle_key (serial_number : string, handle : data) -> data maybe. 
+encrypt(key : data, plaintext : string) -> data
+decrypt(key : data, ciphertext : data) -> string maybe
+here () -> ROOM
+hint (word : string maybe) -> string maybe
+print (message : string) -> nothing
+move_self_to_room (room : ROOM) -> nothing
+move_item_to_room (item : ITEM, room : ROOM) -> nothing
+

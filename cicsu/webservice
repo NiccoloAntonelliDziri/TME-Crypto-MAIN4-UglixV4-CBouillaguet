@@ -1,0 +1,44 @@
+DISCLAIMER: ceci est le prototype d'une nouvelle activité pédagogique
+            ce n'est pas encore très abouti.  NE PAS UTILISER EN PRODUCTION !
+
+SCENARIO (blabla qu'on raconte aux étudiants)
+=============================================
+Nous enquêtons actuellement sur une série de délits bancaires.  Il
+semble que des fraudeurs aient trouvé un moyen de désactiver toute
+une série de vérifications de sécurité dans ces terminaux de
+paiement, ce qui leur permet de payer avec de fausses cartes de
+crédit.  Ces cartes indiquent un numéro de compte bidon, et du coup
+les banques doivent assumer des transactions alors qu'elles ne peuvent
+débiter personne.
+Les banques qui coopèrent avec nos services ont compilé une
+base de données de transactions potentiellement frauduleuses.
+Nous souhatons que vous en examiniez un extrait et que vous
+déterminiez si chaque transaction est légitime.
+
+TRAVAIL À FAIRE (l'emballage de l'activité pédagogique)
+=======================================================
+Vous obtiendrez un lot de transactions à traiter.  Plus précisément,
+vous obtiendrez un dictionnaire avec :
+  - identifier:   un identifiant de lot
+  - transactions: une liste transactions
+
+Vous devez déterminer si ces transactions sont valides.  Vous devrez
+fournir une liste de booléens (un par transaction) indiquant si chacune
+d'entre elle est valide.
+
+Une fois que vous avez tenté votre chance avec un lot de transaction,
+celui-ci est ``cramé'' et vous devez recommencer avec un autre.  Les
+identifiants de lots sont pérennes et sont toujours valable après une
+déconnexion, donc il est possible de travailler hors-ligne.
+
+Pour vous entraîner, vous pouvez obtenir une transaction aléatoire,
+son statut ainsi qu'une explication.  Un mélange de transaction valides
+et invalides est renvoyé.  Récupérez plusieurs échantillons pour avoir
+une idée des différents problèmes qui peuvent survenir.
+
+FORMATTAGE
+==========
+Les données peuvent être affichées en JSON ou en YAML.  Le JSON est plus
+facile à traiter automatiquement mais le YAML est plus human-friendly.
+Le champ ``signature'' d'une transaction contient la signature du champ
+``data'', qui contient les données de la transaction, sérialisées en JSON.

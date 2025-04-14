@@ -1,0 +1,111 @@
+Une chaine de caractère est une séquence de caractères.  La façon dont
+ces caractères sont représentés par des séquences de bits est decrite
+par un système d'encodage.  Il en existe de nombreux, et ils sont bien
+sûr tous incompatibles entre eux.  Certains ne permettent pas de
+représenter tous les caractères.  Par exemple, l'encodage ISO-8859-1
+(a.k.a.  latin-1) code les caractères sur un octet.  Il est bien adapté
+au monde occidental, mais ne contient pas les signes asiatiques, par
+exemple.  Le KOI8-R, lui, permet de représenter les caractères
+cyrilliques, etc.
+
+Le système unicode permet de représenter la plupart des caractères connus,
+mais il n'est pas très compact (4 octets par caractères).  Représenter des
+chaines de caractères comme des séquences de caractères unicode offre
+l'avantage de faire disparaître tous ces ennuyeux problèmes d'encodage. C'est
+le choix des concepteurs de Python.  Dans ce langage, une chaine de
+caractère (un objet de type "str") est représentée en mémoire dans le système
+unicode.
+
+Il existe aussi en python un autre type de chaine, les objets de type
+"bytes".  Il s'agit d'une simple séquence d'octets, comparable aux
+tableaux de type char qu'on a dans le langage C.
+
+>>> type("toto")
+<class 'str'>
+
+>>> type(bytes([0, 1, 2]))
+<class 'bytes'>
+
+Tout ceci a deux conséquences.
+
+
+A) Traitement du texte
+----------------------
+
+Les programmeurs doivent se soucier de ces problèmes d'encodage
+lorsqu'ils doivent transformer des chaines de caractères en séquences
+d'octets, par exemple pour les écrire dans un fichier, les envoyer sur
+le réseau, ou les transmettre à un autre programme (comme openssl...).
+Par défaut dans UGLIX, les chaines unicodes sont encodées en UTF-8
+lors de leur conversion en séquences d'octets.
+
+Les chaines unicodes ont une méthode "encode", qui prend en argument
+un encodage (la valeur par défaut est "utf-8").
+
+>>> 'toto'.encode()
+b'toto'
+
+>>> 'aïlle'.encode()
+b'a\xc3\xaflle'
+
+Quand ils sont affichés, les objets de type byte sont préfixés par la
+lettre 'b'.  Ils possèdent, eux, une méthode "decode", qui prend
+aussi en argument un encodage (utf8 par défaut).
+
+>>> b'\xc3\xa0 V\xc3\xa4\xc3\xafn\xc3\xb6'.decode()
+'à Väïnö'
+
+Une situation où l'encodage apparaît explicitement concerne l'utilisation de
+OpenSSL.  Il est nécessaire d'encoder les chaines de caractères unicode avant
+de les envoyer à openssl (lors du chiffrement), et il est nécessaire de les
+décoder en sortie de openssl (lors du déchiffrement) pour récupérer de
+l'unicode.
+
+
+B) Traitement des données binaires
+----------------------------------
+
+Il est parfois nécessaire d'envoyer ou de recevoir des requêtes
+contenant des données binaires, qui ne sont pas interprétables comme
+des chaines de caractères (il y a en effet des séquences d'octets qui
+sont des encodages invalides en UTF-8, et qui sont donc rejetées lors
+du décodage).  Par exemple :
+
+>>> s = bytes([5*i*i & 0xff for i in range(10)])
+>>> s.decode()
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xb4 in position 6: invalid start byte
+
+Dans ce cas-là, il faudrait transmettre des objets de type bytes().  Le
+petit problème, c'est que les bytes() ne sont pas forcément affichables 
+sur un terminal conçu principalement pour afficher des caractères ASCII.
+Pour contourner cette difficulté, il faut encoder les bytes() en
+quelque chose qui soit du texte acceptable, pour en faire une str().
+Dans UGLIX, on utilise généralement à cette fin deux encodages : en base64
+(les séquences d'octets sont découpées en paquets de 6 bits, et chaque
+paquet est converti en une lettre) ou bien en hexadécimal.
+
+Pour ceci, on fait appel aux fonctions b64encode et b64decode du
+module base64.  Voici un exemple
+
+>>> import base64
+>>> base64.b64encode(s)
+b'AAUULVB9tPVAlQ=='
+
+Notez qu'on récupère des "bytes".  Mais ceux-là, on peut les convertir
+en texte sans douleur.
+
+>>> b'AAUULVB9tPVAlQ=='.decode()
+'AAUULVB9tPVAlQ=='
+
+Les objets de type "bytes" ont une méthode .hex() qui fait
+ce que son nom indique :
+
+>>> s.hex()
+'0005142d507db4f54095'
+
+De plus, on peut convertir la représentation hexadécimale en bytes()
+avec la "méthode de classe" bytes.fromhex() :
+
+>>> bytes.fromhex('deadbeef')
+b'\xde\xad\xbe\xef'
+

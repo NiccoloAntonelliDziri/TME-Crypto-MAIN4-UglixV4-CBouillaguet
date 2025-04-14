@@ -1,0 +1,27 @@
+CHIFFREMENT SYMÉTRIQUE AVEC CLEF ET IV EXPLICITES
+=================================================
+
+Il est généralement plus simple d'effectuer le chiffrement symétrique en
+donnant un mot de passe.  La librairie OpenSSL se charge d'y introduire de
+l'aléa, d'en tirer une clef symétrique et un IV de tailles adaptées au
+système de chiffrement par bloc utilisé.
+
+On peut aussi fournir soit-même une clef et un IV des bonnes tailles. Le
+chiffrement est alors déterministe (aucun aléa n'est plus introduit). Il faut
+spécifier la clef et l'IV en hexadécimal lors de l'invocation de openssl.
+
+Si on utilise l'AES, la clef et l'IV sont de taille 128 bits, c'est-à-dire 16 
+octets.
+
+Par exemple :
+
+    echo "hello" | openssl enc -aes-128-cbc -K ddd0ff56f830b099c0bbf3953168c6c0 \
+                                   -base64 -iv 99d7f6d1cb078797c729f139738f67c5
+
+produira immanquablement le chiffré :
+
+    to2FUV1iojLFn/x0usC1Dw==   (encodé en base64).
+
+Il faut noter que l'IV n'est ***PAS*** stocké dans le chiffré. Pour déchiffrer,
+il faudra fournir la clef ET l'IV utilisés lors du chiffrement.
+

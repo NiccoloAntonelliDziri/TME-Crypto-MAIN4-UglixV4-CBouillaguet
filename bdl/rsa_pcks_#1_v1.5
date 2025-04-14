@@ -1,0 +1,133 @@
+RSA PKCS #1 v1.5
+================
+
+La signature RSA peut s'implanter de plusieurs manières, mais celle qui est 
+décrite ici (et qui est implantée par OpenSSL) est assez courante.  Il s'agit
+d'appliquer un bourrage qui empêche les attaques triviales par malleabilité.
+Cette procédure est standardisée dans la RFC 3447 :
+
+      https://www.ietf.org/rfc/rfc3447.txt
+
+Une implantation open-source se trouve à la fin de ce document
+
+Pour signer un message M sous une clef (N, d), on applique la procédure 
+suivante :
+1. [Hachage.]          Calculer : h <-- SHA256(M)
+2. [Bourrage.]         Assembler le bloc d'octets :
+
++------+----------------------------------------------------+----+---------+---+
+| 0001 | FFFFFFFFFFF............................FFFFFFFFFFF | 00 | HASH_ID | h |
++------+----------------------------------------------------+----+---------+---+
+
+                       Dont la composition se décompose comme suit :
+                       1. les deux octets 0001
+                       2. un certain nombre d'octets FF (au moins 10)
+                       3. un octet 00
+                       4. une chaine de bits magique qui identifie la fonction
+                          de hachage sha256, et qui vaut :
+                          HASH_ID = 3031300d060960864801650304020105000420
+                       5. l'empreinte du message (32 octets)
+
+                       Le tout doit faire le même nombre d'octets que le N de la
+                       clef publique --- il faut ajuster le nombre d'octets FF de
+                       bourrage de l'étape b.
+
+2. [Exponentiation.]   Voir cette séquence d'octets comme un entier (big-endian),
+                       puis calculer : signature <-- bloc**d % N.
+
+Pour vérifier une signature, on calcule : bloc <-- signature**e % N, puis on
+vérifie que le bloc a la forme prescrite.
+
+
+IMPLANTATION EN PYTHON
+----------------------
+
+from hashlib import sha256
+
+# function names respect those in https://www.ietf.org/rfc/rfc3447.txt
+
+# sha-256
+hash_id = b'010\r\x06\t`\x86h\x01e\x03\x04\x02\x01\x05\x00\x04 '
+
+def i2osp(x : int, k : int) -> bytes:
+    """
+    convert the integer x to a sequence of k bytes
+    """
+    return x.to_bytes(k, byteorder='big')
+
+def os2ip(x : bytes) -> int:
+    """
+    convert the sequence of bytes to an integer
+    """
+    return int.from_bytes(x, byteorder='big')
+
+def emsa_pkcs1_encode(m : bytes, k : int) -> bytes:
+    """
+    encode a message into k bytes for rsa signature
+    """
+    h = sha256(m)
+    t = hash_id + h.digest()
+    if len(t) + 11 > k:
+        raise valueerror("message too long")
+    ps = bytes([0xff] * (k - len(t) - 3))
+    em = bytes([0x00, 0x01]) + ps + bytes([0x00]) + t
+    return em
+
+def emsa_pkcs1_decode(em : bytes, k : int) -> bytes:
+    """
+    given an emsa_pkcs1-encoded message, returns the hash
+    
+    >>> x = emsa_pkcs1_encode("toto", 128)
+    >>> emsa_pkcs1_decode(x, 128) == sha256("toto".encode()).digest()
+    true
+    """
+    if len(em) != k:
+        raise valueerror("incorrect size")
+    if em[:2] != bytes([0x00, 0x01]):
+        raise valueerror("incorrect header")
+    i = 2
+    while em[i] != 0:
+        if em[i] != 0xff:
+            raise valueerror("incorrect filler")
+        i += 1
+        if i == k:
+            raise valueerror("only filler")
+    if i < 10:
+        raise valueerror("not enough filler")
+    t = em[i+1:]
+    if t[:len(hash_id)] != hash_id:
+        raise valueerror("bad hash id")
+    h = t[len(hash_id):]
+    return h
+
+def key_length(n : int) -> int:
+    """
+    key length in bytes
+    """
+    return (n.bit_length() + 7) // 8
+
+def rsa_pkcs_sign(n : int, d : int, m : bytes):
+    """
+    rsa signature using pkcs#1 v1.5 encoding
+    """
+    k = key_length(n)
+    em = emsa_pkcs1_encode(m, k)
+    m = os2ip(em)
+    s = pow(m, d, n)
+    s = i2osp(s, k)
+    return s
+
+def rsa_pkcs_verify(n : int, e : int, m : bytes, s : bytes) -> bool:
+    """
+    verify rsa pkcs#1 v1.5 signatures
+    """
+    k = key_length(n)
+    if len(s) != k:
+        raise valueerror("bad length")
+    s = os2ip(s)
+    m = pow(s, e, n)
+    em = i2osp(m, k)
+    h = emsa_pkcs1_decode(em, k)
+    return (h == sha256(m).digest())
+
+

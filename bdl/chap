@@ -1,0 +1,15 @@
+Protocole CHAP (Challenge Handshake Authentication Protocol)
+============================================================
+
+La méthode traditionnelle pour s'authentifier consiste à révéler son mot de 
+passe.  Ceci pose évidemment un problème de sécurité sur un canal non-sécurisé.
+Il est possible de faire mieux grâce au protocole CHAP.
+
+Pour cela, il suffit d'entrer son nom d'utilisateur normalement mais d'indiquer 
+"__CHAP__" comme mot de passe.  L'utilisateur reçoit en échange un challenge
+chiffré.  Il doit le déchiffrer avec son mot de passe puis renvoyer le texte clair
+pour prouver son identité. 
+
+Le chiffrement est effectué avec la méthode standard (OpenSSL, AES-128-CBC, 
+PBKDF2, Base64).  Consulter le guide d'OpenSSL sur le chiffrement pour plus de
+précisions.

@@ -1,0 +1,24 @@
+GÉNÉRATION D'UNE PAIRE DE CLEFS
+===============================
+
+Openssl permet de générer des paires de clefs, avec la commande : 
+
+    openssl genpkey <options>
+
+Encore une fois, vous êtes encouragés à consulter "man genpkey" et 
+la documentation de openssl.  Par défaut, le résultat est envoyé sur
+la sortie standard.  Le résultat contient la paire de clefs, au format
+PEM (c'est de l'ASCII) propre à openssl et un peu pénible à décoder à
+la main. 
+
+Par exemple, pour générer une paire de clefs RSA de 1024 bits :
+
+    openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:1024
+
+
+Une commande permet d'extraire la clef publique uniquement, pour la
+communiquer à des tiers : 
+
+    openssl pkey -in <fichier contenant la clef secrète> -pubout
+
+

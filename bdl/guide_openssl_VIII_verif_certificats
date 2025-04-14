@@ -1,0 +1,89 @@
+INTRODUCTION AUX CERTIFICATS AVEC OPENSSL
+=========================================
+
+Les certificats permettent d'authentifier une clef publique en garantissant
+qu'elle appartient bien à une personne ou à une entité donnée.
+
+Les certificats contiennent essentiellement un nom et une clef publique, le
+tout signé par un "garant" qui émet le certificat. Plus en détail, un
+certificat contient :
+
+- l'identité de celui qui a émis et signé le certificat ("issuer")
+- une clef publique
+- une identité associée à cette clef publique ("subject")
+- des meta-données
+- une signature de l'ensemble
+
+Il y a un format "standard" de certificats (la norme X.509). L'utilitaire
+openssl permet de les afficher et de les manipuler. Il faut noter que la
+production de certificats avec openssl est un art délicat, qui n'est pas
+couvert par cette note.
+
+De manière générale, il est recommandé de consulter la documentation openssl
+("man openssl-x509").
+
+
+AFFICHAGE
+---------
+
+La commande pour afficher un certificat dans un format partiellement lisible
+par des êtres humains est :
+
+        openssl x509 -text -noout
+
+Elle attend un certificat sur l'entrée standard. On peut afficher uniquement
+le "subject" avec la commande :
+
+        openssl x509 -subject -noout
+
+Un certificat est essentiellement une clef publique signée. On peut parfois
+vouloir récupérer la clef publique isolément. Pour cela, on peut utiliser la
+commande :
+
+        openssl x509 -pubkey -noout
+
+
+VERIFICATION
+------------
+
+La commande pour vérifier la validité d'un certificat est :
+
+        openssl verify
+
+Elle attend un certificat sur l'entrée standard. De manière amusante, elle
+affiche toujours "OK", même si le certificat est invalide. Par contre, dans
+ce cas-là elle affiche des messages d'erreur sur la sortie standard. Les
+codes d'erreur sont décrits dans la documentation openssl
+("man openssl-verify").
+
+
+CHAINES DE CERTIFICATS
+----------------------
+
+Pour être considéré comme valable, un certificat doit être signé par un
+certificat valable (oui, la définition est récursive) qui possède la
+meta-donnée "CA:TRUE".
+
+Les certificats des autorités de certifications sont auto-signés, donc ils ne
+sont pas valables a priori. On peut indiquer un fichier contenant des
+certificats auxquels on fait confiance (typiquement, ceux des autorités de
+certification). Ceci se fait de la façon suivante :
+
+        openssl verify -trusted <fichier>
+
+Ceci attend toujours un certificat sur l'entrée standard, mais le vérifie en
+considérant que celui (ou ceux) contenus dans <fichier> sont valables.
+
+Si on a une chaine de certificats A --> B --> C (par exemple A est une
+autorité de certification "top-level" et B est une sous-autorité de
+certification), il faut indiquer à openssl les trois certificats. On peut
+pour cela utiliser :
+
+        openssl verify -trusted <fichier_1> -untrusted <fichier_2>
+
+Dans <fichier_1> on met les certificats auxquels on fait confiance (celui de
+A, par exemple). Dans <fichier_2>, on met les certificats qu'on connait mais
+auxquels on ne fait pas confiance a priori (celui de B par exemple). On
+envoie le certificat de C sur l'entrée standard.
+
+

@@ -1,0 +1,26 @@
+CHIFFREMENT À CLEF PUBLIQUE
+===========================
+
+Openssl permet d'effectuer du chiffrement/déchiffrement asymétrique, avec
+l'algorithme RSA.  Vous êtes invité à consulter la page de manuel
+correspondante (man openssl-pkeyutl). 
+
+L'usage d'openssl pour effectuer des opérations de (dé)chiffrement asymétrique
+a deux limitations :
+
+1) Le message clair DOIT être plus court que la clef.  Si ce n'est pas le cas,
+   l'opération échoue avec un message "Public Key operation error, data too 
+   large for key size".  Avec une clef de 2000 bits, vous avez droit à environ
+   1800 bits de message.  C'est une limitation de l'algorithme lui-même.
+
+2) Openssl ne prévoit pas d'encoder le résultat de l'opération de chiffrement
+   en base64.  Par contre il y a une option pour l'encodage en... hexadécimal.
+
+La commande essentielle pour le chiffrement :
+
+   openssl pkeyutl -encrypt -hexdump -pubin -inkey <fichier contenant la clef publique>
+
+Ceci attend un message sur l'entrée standard, et affichera son chiffrement sur
+la sortie standard.  Pour déchiffrer, il faut fournir la clef secrète (et donc
+retirer l'option  "-pubin")
+

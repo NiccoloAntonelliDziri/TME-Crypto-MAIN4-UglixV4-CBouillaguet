@@ -1,0 +1,16 @@
+PROTOCOLE D'IDENTIFICATION À CLEF PUBLIQUE
+==========================================
+
+Les utilisateurs qui ont déposé une clef publique dans la PKI peuvent
+s'identifier de manière encore plus sécurisée, sans utiliser leur mot de passe
+du tout.
+
+Pour cela, il suffit d'entrer son nom d'utilisateur normalement mais d'indiquer 
+"__PK__" comme mot de passe.  L'utilisateur reçoit en échange un challenge
+Il doit le signer (avec sa clef secrète) puis envoyer la signature pour prouver 
+son identité.
+
+La signature, qui doit être encodée en hexadécimal comme d'habitude, est
+vérifiée avec la clef publique de l'utilisateur déposée dans la PKI.  Consulter 
+le guide d'OpenSSL sur la signature pour plus de précisions.
+

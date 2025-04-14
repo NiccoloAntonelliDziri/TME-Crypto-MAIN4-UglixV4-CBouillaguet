@@ -1,0 +1,97 @@
+FORMAT DES CLEFS PUBLIQUES DANS OPENSSL
+=======================================
+
+L'utilitaire OpenSSL lit et écrit des clef publiques dans un format
+standardisé, décrit notamment par la RFC 8017, annexe A.
+
+Les clefs sont encodées en base64, et sérialisées dans un format bien
+compliqué (encodage DER de structures ASN.1) !  Le format des clefs RSA et
+des clefs DSA est à peu près le même... mais pas complètement.
+
+On peut examiner le contenu d'une clef publique de plusieurs manières.
+
+LA MANIÈRE DOUCE
+----------------
+
+Il suffit de faire :
+
+        openssl pkey -pubin -in pk.pem -text
+
+Cela affiche tout dans un format (presque) lisible par des êtres humains.  En
+deux temps trois mouvement on obtient les valeurs indispensables, en hexa
+mais dans un format désagréable (avec des ":" partout).
+
+    Pour une clef RSA, on obtient :
+        - n ("Modulus")
+        - e ("Exponent")
+    
+    Pour une clef DSA, on obtient :
+        - p (le nombre premier)
+        - g (le générateur)
+        - q (l'ordre du générateur)
+        - h ("pub"), c'est-à-dire g**x, où x est la clef secrète.
+
+
+LA MANIÈRE DURE
+---------------
+
+Cette fois, on fait :
+
+        openssl asn1parse -in pk.pem -i
+
+Et là, ce qui se passe dépend de si on a affaire à une clef RSA ou à une clef
+DSA.
+
+    
+Avec une clef RSA, ça affiche quelque chose du genre :
+
+         0:d=0  hl=3 l= 159 cons: SEQUENCE          
+         3:d=1  hl=2 l=  13 cons:  SEQUENCE          
+         5:d=2  hl=2 l=   9 prim:   OBJECT            :rsaEncryption
+        16:d=2  hl=2 l=   0 prim:   NULL              
+        18:d=1  hl=3 l= 141 prim:  BIT STRING        
+
+Le problème, c'est que la clef publique elle-même est planquée dans la BIT
+STRING à l'offset 18. Pour l'obtenir, on fait :
+
+        openssl asn1parse -in pk.pem -i -strparse 18
+
+Le premier nombre est le modulus (n) et le deuxième est l'exposant public e
+(attention, il est aussi en hexadécimal).
+
+
+Avec une clef DSA, on aura par contre :
+
+          0:d=0  hl=4 l= 439 cons: SEQUENCE          
+          4:d=1  hl=4 l= 299 cons:  SEQUENCE          
+          8:d=2  hl=2 l=   7 prim:   OBJECT            :dsaEncryption
+         17:d=2  hl=4 l= 286 cons:   SEQUENCE          
+         21:d=3  hl=3 l= 129 prim:    INTEGER           :F6DE9ADFFB2223E03DC5...
+        153:d=3  hl=2 l=  21 prim:    INTEGER           :CEBDFCDCA7F5B120AB0A...
+        176:d=3  hl=3 l= 128 prim:    INTEGER           :06591EE490F35FC3E917...
+        307:d=1  hl=3 l= 133 prim:  BIT STRING
+
+Les trois entiers qui apparaissent sont respectivement p, q et g (ce sont en
+fait les "paramètres" publics qui ne font pas partie intégrante de la clef).
+Quand au h, la clef publique à proprement parler, elle est planquée dans la
+BIT STRING à l'offset 307 (attention, cet offset dépend maintenant de la
+taille des paramètres). Pour l'obtenir, on fait :
+
+        openssl asn1parse -in pk.pem -i -strparse 307
+
+
+UTILISATION DE LIBRAIRIES ASN.1
+-------------------------------
+
+Il existe des bibliothèques capable de parser l'asn.1 (e.g. pyasn1 en python).
+Cela peut être utile mais ça demande sûrement une prise en main plus longue
+que de bricoler comme indiqué ci-dessus.
+
+
+FORMAT DES CLEFS SECRÈTES
+-------------------------
+
+Dans l'ensemble, c'est encore pire. Ceci dit, les terminaux de service
+permettent de les génerer.  Si ce n'est pas encore fait, ça le sera bientôt.
+
+

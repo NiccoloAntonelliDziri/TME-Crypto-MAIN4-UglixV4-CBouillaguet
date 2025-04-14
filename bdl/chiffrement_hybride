@@ -1,0 +1,33 @@
+CHIFFREMENT HYBRIDE
+===================
+
+Le chiffrement hybride est une technique répandue qui permet de contourner des
+limitations des algorithmes de chiffrement à clef publique, notamment le fait
+que la taille des messages à chiffrer est sévèrement limitée. Dans OpenSSL, par
+défaut, les opérations de chiffrement avec des clefs publiques RSA n'acceptent
+pas les messages plus longs que la clef, soit moins de 2000 bits environ.
+
+Le chiffrement hybride permet de s'affranchir de cette limitation.  Il consiste à :
+
+1. Chiffrer le message avec un algorithme de chiffrement symétrique avec une clef 
+   fraiche (choisie exprès pour l'occasion et jetée après).
+
+2. Chiffrer cette "clef de session" (qui est compacte) avec la clef publique du
+   destinataire.
+
+La technique est notamment utilisée dans le courrier électronique chiffré avec
+PGP ou S/MIME.  Dans UGLIX, pour un chiffrement hybride, on envoie un
+dictionnaire (sérialisé en JSON) contenant les clefs :
+
+    - "session_key" : une clef secrète jetable, chiffrée avec la clef publique
+                      du destinataire (chiffrement asymétrique openssl).  Elle 
+                      doit faire au moins 16 caractères, être en ASCII, contenir 
+                      des lettres ET des chiffres.
+
+    - "ciphertext"  : le message chiffré (chiffrement symétrique openssl standard) 
+                      avec la clef <session_key>.
+
+Conformément aux guides d'utilisation de OpenSSL, la <session_key> (chiffrée) doit 
+être encodée en hexadécimal, tandis que le <ciphertext> (chiffré) doit être encodé 
+en base64.
+

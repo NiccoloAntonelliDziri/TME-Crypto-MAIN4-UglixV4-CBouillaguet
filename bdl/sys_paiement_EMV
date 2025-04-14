@@ -1,0 +1,41 @@
+PROTOCOLE EMV
+=============
+
+D'après Wikipédia : 
+
+	"Europay Mastercard Visa", abrégé par le sigle EMV, est depuis 1995 le
+	 standard international de sécurité des cartes de paiement (cartes à
+	 puce). Il tire son nom des organismes fondateurs.
+
+On peut consulter la spécification (indigeste) en lisant le "EMV book 2"
+librement disponible sur internet.  Ce document décrit sommairement les grands
+principes.
+
+Les cartes de paiement contiennent une mémoire qui n'est pas facilement
+accessible, et qui permet donc de stocker des données secrètes.  La carte
+contient aussi des données non-secrètes, qui ont vocation à être communiquées
+au terminal de paiement : le numéro du compte bancaire à débiter, par exemple,
+ainsi que des clefs publiques et des certificats.
+
+L'usage de la cryptographie vise principalement à empêcher la fraude, par les
+clients (qui possèdent une carte bleue) ou par les marchands (qui possèdent un
+terminal de paiement).  L'hypothèse de travail est que des fraudeurs peuvent
+espionner les communications entre la carte et le terminal de paiement.  Dans ce
+système, chaque banque possède une ou des clef(s) publique(s).  Une autorité de
+certification spécifique au système EMV fournit des certificats aux banques.  Les
+terminaux de paiement possèdent tous la clef publique de cette autorité.
+
+La carte possède un CPU.  Sa mémoire contient des données bancaires, ainsi qu'une
+paire de clefs RSA.  Pour authentifier la carte, le terminal lui envoie des
+données (le numéro de compte du marchand, la date, ainsi qu'un nombre aléatoire
+imprévisible), et la carte en renvoie une signature.
+
+Le terminal de paiement vérifie cette signature grâce à la clef publique de la
+carte.  Mais il doit aussi vérifier que la carte a été émise par une banque
+légitime.  Pour cela, la carte contient un certificat émis par la banque.  Pour
+vérifier ce dernier, le terminal de paiement a donc également besoin de la clef
+publique de la banque.  Celle-ci est aussi stockée sur la carte.  Le terminal
+de paiement doit l'authentifier elle aussi, et pour cela la carte contient
+également le certificat de la banque émis par l'autorité de certification
+centrale.
+

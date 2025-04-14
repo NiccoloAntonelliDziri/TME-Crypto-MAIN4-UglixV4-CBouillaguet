@@ -1,0 +1,306 @@
+
+Prologue - Niveau SS
+====================
+
+En sortant du local poubelle, aller voir le datacenter au nord-est. Examiner le
+terminal, le clavier, l'affiche au mur...  Il faut réaliser un déchiffrement
+symétrique avec OpenSSL.  Aller à la réserve lire la doc sur OpenSSL. Retourner
+au datacenter, booter le terminal.  Créer un compte.  Oooops, le censory engine
+et le security engine se rallument.
+
+Il faudrait sortir de ce sous-sol, mais on n'y voit rien et les ascenseur sont
+HS.  Aller au local électrique pour rallumer le courant.  Là, utiliser le
+terminal.  Ah, il faut faire une signature numérique et on n'a pas uploadé sa
+clef publique... Aller au local de service voisin, utiliser le terminal,
+choisir "Public Key Infrastructure" puis "Upload public-key"... Et merde, il
+faut faire le tuto d'abord.  OK, on fait le tuto, puis on uploade sa clef
+publique.  
+
+Ah, le security engine pense que c'est nous qui l'avons désactivé... On n'y
+comprend pas grand-chose, mais c'est pas grave. On retourne au local électrique
+faire sa signature.  Et voilà, le courant est revenu. La carte est plus
+précise.  Ah, le security engine nous a repéré et il pête un cable.  Les
+ascenseurs sont toujours HS.  On se ballade un peu et... oooops, les tourelles
+nous tirent dessus ! 
+
+On est coincé dans la partie sud de la carte.  Mais une baie vitrée qu'on peut
+fracasser avec l'extincteur ou le pied-de-biche permet de sortir.  Le problème
+c'est qu'on a que 5% de chance de survie...  Néanmoins, une nouvelle pièce est
+accessible, les "archives".  Là, il faut faire au moins un des niveau du
+mini-jeu pour booster la probabilité de survie à 42%.  En 2-3 essais à travers
+la baie vitrée, ça passe.
+
+
+
+Niveau SB
+=========
+
+Il y a plusieurs endroits qu'on peut explorer en parallèle.  Il n'y a pas
+vraiment d'ordre.
+
+
+Hall de la bibliothèque (nord)
+------------------------------
+
+Le hall de la bibliothèque contient un catalogue.  Toute la doc nécessaire pour
+faire le TP est dans la bibliothèque !  Mais pour accéder à certains ouvrages, 
+il faut se connecter avec un "protocole" suffisamment sécurisé.  On accède comme
+ça à la doc du distributeur de friandises.  Ceci permet d'accéder à son module
+d'administration.  Ça ne sert pas à grand-chose, mais ça nous donne un walkman.
+Il permet de contrôler la musique.  Classe !
+
+Dans le catalogue de la bibliothèque, essayer de récupérer le dernier livre (la
+spécification du langage RML) donne une erreur suspecte... Et un message signé
+avec la signature (à usage unique) de Lamport.  Et si on recommence plusieurs
+fois, on obtient plusieurs signatures avec plusieurs "excuses" différentes !  
+Ceci permet de reconstruire la clef secrète intégralement puis d'entrer dans la 
+bibliothèque.
+
+
+LPNHE (nord-ouest)
+------------------
+
+Dans le hall d'entrée, il y a une espèce de terminal qui permet d'envoyer des
+messages... dans des univers parallèles ?!? Ils s'y croient grave dans ce labo.
+
+On entre dans le bureau RC-13.  Le post-it nous révèle le nom de l'utilisateur
+contre lequel l'admin est en colère, et la trace d'exécution du protocole CHAP
+contient bien ce nom-là.  À côté il y a un terminal où on ne peut pas se
+connecter avec nos propres identifiants.  Il nous faudrait le mot de passe de
+cet utilisateur.  Mais c'est quoi le protocole CHAP ?!?  En fait il est décrit
+dans un ouvrage disponible à la bibliothèque.  On va donc y faire un tour, puis 
+on effectue une attaque par dictionnaire pour retrouver le mot de passe contenu
+dans la "trace" d'exécution du protocole opportunément oubliée ici.  
+
+On alors se connecte au terminal du bureau RC-13.  Il permet d'envoyer des 
+"messages" dans les mondes parallèles identifiés par des "coordonnées" opaques.  
+Ça a juste l'air très utile pour troller les copains.  Juste pour rire, on 
+envoie "prout !!!" à tout l'univers connu et même au-delà ("broadcast").
+Et là... quelqu'un (ou quelque chose) nous répond !  Une espèce de bot qui veut
+qu'on lui parle avec du "chiffrement hybride".  Un petit tour à la
+bibliothèque... En plus il veut que notre clef publique soit signée par 3
+utilisateurs (quel gros casse-pied).  Mais une fois qu'on a accompli toutes ces 
+formalités, on reçoit un message d'un gars qui nous propose une sorte de deal et
+nous révèle des informations inquiétantes.  Tout ça suggère qu'il va falloir 
+aller dans la salle d'expériences qui est au bout du couloir.
+
+Dans le bureau RC-14, il y a un coffre-fort (qui contient a priori le fameux
+geolocator) mais on sait pas comment l'ouvrir.  Dans le RC-17, il n'y a...
+rien ?  Enfin, si, il y a un brouillon d'article de recherche qui laisse penser
+qu'il est possible de "téléporter" des objets entre deux mondes parallèles.  
+Mais comment ?
+
+Dans le RC-19, il y a un terminal défectueux.  En fait, il est possible de
+déchiffrer le charabia qui est affiché (en faisant un dernier petit tour à la
+bibliothèque).  Ceci révèle le digicode de la porte du fond du couloir qui
+donne sur la salle expérimentale, et explique comment le géolocator est arrivé.
+
+Dans la salle expérimentale, on trouve un pied-de-biche et une des trois clefs
+qui ouvre le coffre.  Mais comment récupérer les deux autres ?  En fait tous
+les "mondes" ne contiennent pas la même clef.  Donc en se coordonnant bien avec
+d'autres, on peut récupérer les trois clefs puis ouvrir le coffre.  Ceci donne
+le géolocator.  Mais pour l'instant, on ne sait pas à quoi il sert.
+
+Envoyer le pied-de-biche au PNJ révèle le secret du bureau aux estampes.  Mais
+pour l'instant, ça ne fait pas avancer le schmilblick.
+
+
+CICSU (sud-est)
+---------------
+
+Pour entrer au CICSU, il faut charger un certificat sur sa carte d'étudiant puis
+la passer sur le lecteur de badge à l'entrée.  Ceci nécessite d'aller à un 
+terminal de service puis de soumettre une "Certificate Signing Request".
+
+À l'intérieur, dans la salle d'expo, il y a le bibliodrone-NG, qu'on aimerait
+bien "emprunter" mais que le robot-gardien protège.  Il y a aussi une borne de
+mise à jour de firmware, mais pour l'instant on ne sait pas trop à quoi ça sert.
+
+Dans l'auditorium lui-même, il y a le laptop de la direction.  Il permet de
+faire des signatures RSA, si on se débrouille bien pour mettre le padding
+nous-même(aller à la bibliothèque pour les détails).  On essaye d'obtenir une
+signature sur une autorisation d'emprunter le bibliodrone... Zut, raté.  L'IA
+refuse.  Mais on peut exploiter la malléabilité de RSA pour obtenir la
+signature quand même et récupérer le bibliodrone.  Voilà une bonne chose de
+faite.  On peut aussi faire joujou au jeu de simulation de fraude à la carte de
+crédit.
+
+
+Atrium (nord-est)
+-----------------
+
+Pour entrer dans l'atrium, il faut avoir une clef RSA spéciale et faire une 
+signature avec.  En passant par la fenêtre, on peut entrer dans un bureau qui
+contient un terminal de service et la spécification de la clef attendue.
+
+On arrive dans le couloir bleu.  Wow, on a une espèce de flash !  The website is
+a lie ?!?  Incompréhensible.  Il y a un bureau, le RC-07.  Pour entrer, il faut
+faire une signature RSA qui vérifie avec une des clefs d'un des deux
+utilisateurs dont les noms sont sur la porte... Pour l'instant on passe.
+
+Dans le hall rouge, il y a une clef RSA.  Coup de bol, c'est celle d'un des deux
+utilisateurs... Mais bon, elle a été révoquée parce qu'elle a été perdue...
+Mais on sait que les deux utilisateurs ont le même N, donc avec la clef secrète
+on peut factoriser N puis récupérer la clef secrète de l'AUTRE utilisateur.
+Ceci nous permet d'entrer dans le RC-07.  Ici, il y a deux choses
+intéressantes.  Il y a une "firmware upgrade key" qu'on peut utiliser sur la
+borne dans le CICSU. Ca permet d'activer un mode "debug" qui affiche des
+informations bizarres lorsqu'on utilise des objets.  Pas évident de cerner à
+quoi ça sert...  Il y a aussi une spécification partielle des "flags" qui dit
+qu'ils sont signés avec un MAC.  Pas très surprenant, quand on y réflechit bien.
+
+Dans le couloir jaune, Wow!  On a un nouveau flash... "quelque chose dans les
+flags" ?!?  Ben oui, des points au TP, quoi, what else ?  Dans le couloir, il y
+a un autre bureau où on aimerait bien entrer.  Cette fois, il y a un panneau en
+liège avec un message chiffré avec RSA pour les deux utilisateurs de la
+pièce... qui ont le même N.  Grosse erreur !!!  On récupère le message et on
+entre.  
+
+Il y a une ambiance bizarre et légèrement inquiétante dans ce bureau aveugle. 
+On y trouve un terminal... Utiliser ce terminal nous révèle que le security
+engine connaît notre véritable identité, même si on utilise un pseudonyme dans
+l'application.  Il bloque également notre accès au site web de dépot des flags,
+et montre tous nos flags.  En fait, le site était une grosse arnaque qui ne
+servait qu'à lier notre véritable identité au(x) pseudonyme(s) qu'on utilise
+dans l'application... On s'est bien fait avoir !
+
+Dans le bureau il y a aussi le reste de la spécification des flags, qui nous
+apprend qu'avec suffisamment de flags, on peut fabriquer une nouvelle "firmware
+update key".  À ce stade, on doit avoir assez de flags, donc on fabrique la
+clef de mise à jour, on applique l'upgrade au CICSU, et pouf !  On a accès à une
+commande "sudo".  Classe !  Avec ça on peut utiliser les ascenseurs...  Et donc
+accéder au niveau du dessus. 
+
+
+Intérieur de la bibliothèque / BiblioDrone-NG
+---------------------------------------------
+
+À l'intérieur de la bibliothèque, côté est, le bureau du directeur contient la
+spécification partielle d'un mécanisme d'exécution de méthodes distantes.
+Qu'est-ce que c'est que ce truc ?!?  Essayer d'exécuter la méthode 'world.list'
+donne un indice... (on peut corréler ce que ça renvoie avec ce qu'affichent les
+terminaux du LPNHE).  Ce sont des fonctions qui permettent d'accéder, voire de
+manipuler l'état interne de l'application, donc éventuellement de "hacker" le
+jeu !!!  
+
+Mais comme on ne connaît pas le nom des méthodes, il va falloir tâtonner. Des
+mécanismes de debugging nous seraient bien utiles pour progresser... Mais même
+si on trouve le nom de méthodes intéressantes à invoquer, on se rend compte
+qu'elles sont "kerberisées", donc on laisse tout ça de côté pour l'instant.
+
+Côté ouest, on peut accéder à la réserve où on peut faire descendre un
+bibliodrone au sous-sol pour récupérer des ouvrages "sensibles".  Mais le
+sous-sol est truffé de drones hostiles, et il va falloir renforcer notre
+bibliodrone pour qu'il puisse passer.  Lorsqu'on l'obtient, le BiblioDrone-NG
+n'a qu'un seul module d'extension : le "compact pulse laser".  Pour aller plus
+loin dans la réserve de la bibliothèque, il va falloir l'équipe de trois
+modules additionnels permettant de vaincre des drones de surveillance de plus
+en plus dangereux.  Ceci permet d'explorer la réserve de la bibliothèque et de
+récupérer des ouvrages particulièrement sensibles.
+
+Les trois modules d'extension se trouvent tous au niveau JU .  Il n'y a pas
+"d'ordre" particulier et on peut les obtenir indépendamment les uns des autres.
+- Un est à l'Atrium, mais dans une pièce inaccessible au rez-de-chaussée.
+- Un est au LPNHE, dans une armoire blindée au 1er étage de la barre 12-22.
+- Le dernier est à l'ISIR, protégé par un robot-gardien.
+
+
+
+Niveau JU
+=========
+
+Il y a pas mal d'endroits à explorer, et là encore l'ordre n'est pas important.
+Il faut résister à la tentation de faire 3 codes faux au digicode qui permet de
+sortir du campus.  On ne peut pas et on se fait descendre...
+
+Il faut se promener pas mal d'un lieu à l'autre.
+
+
+PPTI (14-15 / 3ème)
+-------------------
+
+Il y a des TME à faire dans les salles de TME.  Ca rapporte des flags mais c'est
+tout.
+
+
+ISIR
+----
+
+En explorant les lieux, on tombe tout de suite sur le but de notre visite : le
+module d'extension pour le bibliodrone qui est dans la pièce J13.  Mais le robot
+gardien nous empêche de le prendre.  Il faudrait le virer, et apparemment la 
+seule prise qu'on ait c'est qu'il a une prise micro-SD...
+
+Dans la cafet', on trouve un élement d'explication : la carte micro-SD sert à
+introduire un firmware écrit dans le langage RML... une espèce d'aura de
+mystère entoure ce langage : c'est le sujet du livre manquant à la bibliothèque, 
+
+or personne ne sait vraiment ce que c'est... Cependant, on trouve sa
+spécification éparpillée à travers tout le labo.  Il y a même un PC fixe avec
+un compilateur RML !  On peut s'amuser à soumettre des programmes RML... Mais
+déjà il faut une carte micro-SD pour stocker les exécutables produits.  On peut
+en trouver une dans le hall du bâtiment Esclangon...  Mais même si les 
+programmes soumis sont syntaxiquement valides et correctement typés, il faut
+fournir un MAC du code source pour obtenir l'exécutable, et on ne connaît pas la
+clef... Mais on connaît le tag d'un préfixe d'un programme correct, et ceci 
+suffit à mettre en oeuvre la "length-extension attack".
+
+Armés d'une carte micro-SD avec un firmware bidon, on peut désactiver le
+robot-gardien et faire main-basse sur le module d'extension. 
+
+Parallèlement, un email dans le bureau du directeur explique le fonctionnement
+du sas conduisant à la zone à régime restrictif du labo.  Mettre en oeuvre 
+l'attaque par multi-collision de Joux permettrait d'entrer... mais il faudrait
+un moyen de produire des collisions sur la fonction de compression de MD5.  Un
+tel programme est disponible dans l'Atrium (au dernier étage).  Dans la ZRR, un
+gros robot nous saute dessus !  Ici, il n'y a rien à gagner, il s'agit juste de
+survivre....
+
+
+ATRIUM (étages supérieurs)
+--------------------------
+
+Au rez-de-chaussée, le couloir turquoise donne sur un bureau où on ne peut pas
+aller mais qui contient sûrement des trucs intéressants.  Comme on est coincé,
+on monte.  Au premier étage, dans le bureau de l'équipe réseau se trouve un 
+terminal.  Après un petit peu de travail on parvient à en extraire une 
+specification du protocole Kerberos.  À nous l'invocation des méthodes 
+distantes !  Encore faudrait-il trouver un truc intéressant à faire avec...
+
+En attendant, on continuer à monter.  Au 2ème étage, dans le local technique, on
+récupère un ChipWhisperer-lite.  À quoi ça sert ?!?
+
+On monte.  Au 3ème, ha ha !  On trouve un poster avec l'identifiant opaque d'un
+objet.  En "hackant" le moteur de l'application, on peut récupérer le module
+d'extension pour le bibliodrone, et même accéder à la pièce où il se trouvait.
+
+Au 4ème, il y a une salle de TP (de crypto...) ainsi qu'une brochure commerciale
+qui vante les ChipWhisperer's.  Au moins ça nous révèle l'opération qu'effectue
+le modèle qu'on possède.  La salle de TP contient l'énoncé d'un projet, qui 
+contient un chiffré pour notre ChipWhisperer-lite.  Une fois qu'on en vient à
+bout, on obtient une nouvelle "firmware update key" qui montre les méthodes RPC
+qui sont invoquées par NOS actions.  Super !
+
+
+LPNHE (12-22 / 1er-2ème)
+------------------------
+
+Le premier truc sur lequel on tombe, c'est l'armoire blindée avec un digicode.  
+On comprend vite que c'est ça la cible...  Dans la cafet' il y a un document
+chiffré.  Dans le bureau 117, il y a un email faisant allusion à une expérience
+foirée et une clef USB perdue.  Il y a aussi un PC avec un lecteur de clef 
+USB...  Le monde est bien fait !
+
+On monte à l'étage récupérer la clef USB dans la salle des machines.  On ne
+s'attarde pas trop à cause de la radioactivité !  On essaye le lire la clef USB
+contaminée sur le PC de la secrétaire mais ça échoue lamentablement...  En
+fait, il faut récupérer un kit de développement USB "bas-niveau", mais celui-ci
+se trouve... à l'ISIR !
+
+Avec le SDK USB on peut examiner le contenu de la clef USB corrompue.  On 
+apprend une clef AES endommagée et une clef RSA endommagée.  Mais avec des 
+"cold boot attacks" on peut tout reconstituer !  Ceci permet d'obtenir la clef
+secrète qui permet d'ouvrir l'armoire blindée.  Elle contient un module
+d'extension pour le bibliodrone.  On retrouve aussi la clef AES qui permet de 
+déchiffrer le mode d'emploi du module d'extension et de l'activer en entrant
+le code d'armement.

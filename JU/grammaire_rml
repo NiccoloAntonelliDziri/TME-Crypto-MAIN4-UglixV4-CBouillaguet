@@ -1,0 +1,42 @@
+RML GRAMMAR
+===========
+
+<statements> ::= <empty> | <statement> | <statement> . <statements>
+    
+<statement> ::= extern type <id>
+            | let <id> : <type> = <expression>
+            | extern def <id> ( <formals> ) -> <type> 
+            | def <id> ( <formals> ) -> <type> <code>
+    
+<formals> ::= <empty> | <id> : <type> | <id> : <type> , <formals>
+    
+<type> ::= <id> | <type> list | <type> maybe | anything | something | nothing
+    
+<code> ::= { instructions }
+   
+<instructions> ::= <empty> | <instruction> | <instruction> ; <instructions>
+   
+<instruction> ::= <expression>
+                | let <id> : <type> = <expression>
+                | <id> = <expression>
+                | for <id> in <expression> <code>
+                | if <expression> <code>
+                | if <expression> <code> else <code>
+                | case <expression> | None -> <code> | Some <id> -> <code>
+                | return <expression>
+                | return
+                | panic
+    
+<expressions> ::= <empty> | <expression> | <expression> , <expressions>
+
+<expression> ::= None 
+             | <string>
+             | <int>
+             | [ <expressions> ]                               --- list
+             | not <expression>
+             | <expression> <operator> <expression>
+             | <id> ( <expressions> )                         --- function call
+             | ( <expression> )
+
+<operator> ::= + | - | * | / | == | != | < | > | or | and | :: | ^
+

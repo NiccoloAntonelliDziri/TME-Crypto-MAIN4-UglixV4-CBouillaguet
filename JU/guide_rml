@@ -1,0 +1,64 @@
+RML UNIFIED EXTENSIBLE FIRMWARE INTERFACE (UEFI)
+================================================
+
+RML has been designed to efficiently prototype firmwares, with the added benefit
+of extra safety provided by the strong type system.  Firmwares are programs.  
+Firmwares must have a "main" function with the following signature:
+
+        main (action : string maybe, direction : string maybe, item : string maybe) -> nothing
+
+
+The minimal RML firmware program is thus:
+
+-----BEGIN RML PROGRAM -----
+extern type string.
+
+def main(action : string maybe, direction : string maybe, item : string maybe) -> nothing {
+}.
+-----END RML PROGRAM -----
+
+Another relevant example (extracted from a post-mortem on the previous coffee-pot):
+
+-----BEGIN RML PROGRAM -----
+extern type string.
+extern type ROOM.
+
+extern def print (message : string) -> nothing.
+extern def here () -> ROOM.
+extern def room_name(room : ROOM) -> string.
+
+def main(action : string maybe, direction : string maybe, item : string maybe) -> nothing {
+  let location : ROOM = here();
+  if room_name(location) != "ISIR_CAFET" {
+    print("0xbadCAFE !!!"); 
+    panic                               # nobody steals our hackable coffee pot!
+  };
+  # ... rest of the coffee-making program
+  # ejecting previous roast
+  # grounding fresh beans
+  # sending water
+  # etc...
+-----END RML PROGRAM -----
+
+
+The firmware function is invoked by the operating system and/or the application
+running on the device to perform ``actions''.  The precise nature of the actions
+depend on the nature of the device.
+
+For security reasons, firmwares are cryptographically authentified using a MAC.
+By default, ISIR robots and the Experimental RML Compiler use the following MAC:
+
+        tag := SHA256(key || message)
+
+with a specific 128-bit key.  Note that SHA256 is a cryptographically secure hash 
+function.  As an example, the MAC of the (incomplete) coffee-pot program shown 
+above is:
+
+        165daddb7e8019461e69bcda99511e2c64a10c3d79c8aa025371e655affbef27
+
+!!! DISCLAIMER !!!
+==================
+
+The ISIR Experimental RML Compiler has known bugs, and is known to produce
+potentially incorrect firmwares in some specific cases.
+

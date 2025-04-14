@@ -1,0 +1,23 @@
+-----BEGIN RML PROGRAM -----
+extern type string.
+extern type ROOM.
+
+extern def print (message : string) -> nothing.
+extern def here () -> ROOM.
+extern def room_name(room : ROOM) -> string.
+
+def main(action : string maybe, direction : string maybe, item : string maybe) -> nothing {
+let location : ROOM = here();
+if room_name(location) != "ISIR_CAFET" {
+print("0xbadCAFE !!!"); 
+panic                               # nobody steals our hackable coffee pot!
+};
+# ... rest of the coffee-making program
+# ejecting previous roast
+# grounding fresh beans
+# sending water
+# etc...
+}.
+-----END RML PROGRAM -----
+
+
